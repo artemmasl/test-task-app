@@ -15,7 +15,7 @@
         <b-col md="2" class="mainStat">
           <div>
             <span>Скорость</span><br />
-            <span>{{ Math.round(counter/(timer/60)) }} зн./мин</span>
+            <span>{{ calculatSpeed() }} зн./мин</span>
           </div>
           <div>
             <span>Точность</span> <br />
@@ -24,17 +24,29 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-modal id="modal" hide-footer hide-header>
-      <h1>Приготовься печатать. Поехали!</h1>
-      <b-button class="mt-3" variant="primary" @click="startPrint()">
-        Начать печатать!
-      </b-button>
-    </b-modal>
+
+    <Modal :modalShow="showModalStartPrint" :options="modalOptionsStart">
+      <template v-slot:text>
+        <div class="text-align-center">
+          <h1>Приготовься печатать. Поехали!</h1>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <b-button class="mt-3" variant="primary" @click="startPrint()">
+          Начать печатать!
+        </b-button>
+      </template>
+    </Modal>
   </div>
 </template>
 <script>
+import Modal from "@/components/Modal.vue";
+
 export default {
-  name: "Test",
+  name: "TrainerPrint",
+  components: {
+    Modal,
+  },
   created() {
     this.$store.dispatch("fetchText");
   },
@@ -46,21 +58,33 @@ export default {
       totalLetter: 0, // Всего символов в тексте
       timer: 0, // Время на тренажере
       letterRight: "", // Символ который нужно ввести
+      showModalStartPrint: true,
+      modalOptionsStart: {
+        variant: "primary",
+        hideHeader: true,
+      },
     };
   },
   mounted() {
-    this.$bvModal.show("modal"); // Запуск модального окна
     // Прослушка событий клавиатуры для тренажера.
     window.addEventListener("keydown", (e) => {
       if (e.key.length === 1 && this.print) {
-        console.log('test1');
-        if(e.key === this.letterRight) {
+        if (e.key === this.letterRight) {
           this.counter++;
+
+          if (this.counter === this.totalLetter) {
+            let resultTest = {
+              accuracy: this.calculatAccuracy(),
+              speed: this.calculatSpeed(),
+            };
+            this.$router.push({ name: "TestResult", params: { resultTest } });
+          }
+
           this.letterRight = this.textParse[this.counter];
         } else {
-          this.errorCountr++
+          this.errorCountr++;
         }
-      } 
+      }
     });
   },
   computed: {
@@ -84,7 +108,7 @@ export default {
       }
     },
     startPrint() {
-      this.$bvModal.hide("modal");
+      this.showModalStartPrint = false;
       this.letterRight = this.textParse[0];
       this.totalLetter = this.textParse.length;
       this.print = true;
@@ -96,11 +120,15 @@ export default {
       this.errorCountr = 0;
     },
     calculatAccuracy() {
-      let accuracy = 100-(this.errorCountr/ this.totalLetter);
+      let accuracy = 100 - this.errorCountr / this.totalLetter;
       accuracy === 100 ? Math.round(accuracy) : accuracy.toFixed(1);
 
-      return accuracy? accuracy: 100;
-    } 
+      return accuracy ? accuracy : 100;
+    },
+    calculatSpeed() {
+      let speed = Math.round(this.counter / (this.timer / 60));
+      return speed ? speed : 0;
+    },
   },
 };
 </script>

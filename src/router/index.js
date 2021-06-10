@@ -13,14 +13,18 @@ const routes = [
   {
     path: "/work-plan",
     name: "WorkPlan",
-    component: () =>
-      import("../views/WorkPlan.vue"),
+    component: () => import("../views/WorkPlan.vue"),
   },
   {
     path: "/test",
-    name: "Test",
-    component: () =>
-      import("../views/Test.vue"),
+    name: "TrainerPrint",
+    component: () => import("../views/TrainerPrint.vue"), 
+  },
+  {
+    path: '/complete',
+    name: 'TestResult',
+    props: true,
+    component: () => import('../views/TestResult.vue')
   },
 ];
 

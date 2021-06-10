@@ -5,16 +5,20 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    testText: []
+    testText: [],
+    resultTest: {}
   },
   mutations: {
     updatePosts(state, testText) {
-      state.testText = testText
+      state.testText = testText;
     },
+    updateResultTest (state, resultTest) {
+      state.resultTest = resultTest
+    }
   },
   actions: {
     fetchText(context) {
-      fetch('https://baconipsum.com/api/?type=all-meat&sentences=10')
+      fetch('https://baconipsum.com/api/?type=all-meat&sentences=1')
       .then((response) => {
         return response.json()
       })
