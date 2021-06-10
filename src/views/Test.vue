@@ -19,7 +19,7 @@
           </div>
           <div>
             <span>Точность</span> <br />
-            <span>0</span>
+            <span>{{ calculatAccuracy() }} %</span>
           </div>
         </b-col>
       </b-row>
@@ -40,20 +40,27 @@ export default {
   },
   data() {
     return {
-      print: false,
-      counter: 0,
-      errorCountr: 0,
-      timer: 0,
-      letterRight: "",
+      print: false, // Работает ли тренажера
+      counter: 0, // Кол-во правильно введённых символов
+      errorCountr: 0, // Кол-во не правильно введённых символов
+      totalLetter: 0, // Всего символов в тексте
+      timer: 0, // Время на тренажере
+      letterRight: "", // Символ который нужно ввести
     };
   },
   mounted() {
-    this.$bvModal.show("modal");
+    this.$bvModal.show("modal"); // Запуск модального окна
+    // Прослушка событий клавиатуры для тренажера.
     window.addEventListener("keydown", (e) => {
-      if (e.key === this.letterRight && this.print) {
-        this.counter++;
-        this.letterRight = this.textParse[this.counter];
-      }
+      if (e.key.length === 1 && this.print) {
+        console.log('test1');
+        if(e.key === this.letterRight) {
+          this.counter++;
+          this.letterRight = this.textParse[this.counter];
+        } else {
+          this.errorCountr++
+        }
+      } 
     });
   },
   computed: {
@@ -78,7 +85,8 @@ export default {
     },
     startPrint() {
       this.$bvModal.hide("modal");
-      this.letterRight = this.textParse[0]
+      this.letterRight = this.textParse[0];
+      this.totalLetter = this.textParse.length;
       this.print = true;
       this.startTimer();
     },
@@ -87,6 +95,12 @@ export default {
       this.counter = 0;
       this.errorCountr = 0;
     },
+    calculatAccuracy() {
+      let accuracy = 100-(this.errorCountr/ this.totalLetter);
+      accuracy === 100 ? Math.round(accuracy) : accuracy.toFixed(1);
+
+      return accuracy? accuracy: 100;
+    } 
   },
 };
 </script>

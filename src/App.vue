@@ -31,6 +31,6 @@ export default {
 }
 .centerBlue {
   width: 100%;
-    background-color: #55c5ff;
+  background-color: #55c5ff;
 }
 </style>

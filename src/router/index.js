@@ -11,10 +11,10 @@ const routes = [
     component: Home,
   },
   {
-    path: "/about",
-    name: "About",
+    path: "/work-plan",
+    name: "WorkPlan",
     component: () =>
-      import("../views/About.vue"),
+      import("../views/WorkPlan.vue"),
   },
   {
     path: "/test",
