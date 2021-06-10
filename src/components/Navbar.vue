@@ -13,7 +13,7 @@
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item to="/"> Тренажер </b-nav-item>
-            <b-nav-item to="/workPlan"> Тестирование </b-nav-item>
+            <b-nav-item to="/work-plan"> Тестирование </b-nav-item>
             <b-nav-item> Обучение </b-nav-item>
             <b-nav-item> Рейтинг </b-nav-item>
           </b-navbar-nav>
