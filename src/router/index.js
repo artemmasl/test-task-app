@@ -1,30 +1,49 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import PageContainer from "../views/PageContainer.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "PageContainer",
+    component: PageContainer,
+    children: [
+      {
+        path: "/",
+        name: "Home",
+        component: () => import("../views/Home.vue"),
+      },
+      {
+        path: "/work-plan",
+        name: "WorkPlan",
+        component: () => import("../views/WorkPlan.vue"),
+      },
+      {
+        path: "/test",
+        name: "TrainerPrint",
+        component: () => import("../views/TrainerPrint.vue"), 
+      },
+      {
+        path: '/complete',
+        name: 'TestResult',
+        props: true,
+        component: () => import('../views/TestResult.vue')
+      },
+    ]
   },
   {
-    path: "/work-plan",
-    name: "WorkPlan",
-    component: () => import("../views/WorkPlan.vue"),
-  },
-  {
-    path: "/test",
-    name: "TrainerPrint",
-    component: () => import("../views/TrainerPrint.vue"), 
-  },
-  {
-    path: '/complete',
-    name: 'TestResult',
+    path: '/login',
+    name: 'Login',
     props: true,
-    component: () => import('../views/TestResult.vue')
+    component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    props: true,
+    component: () => import('../views/Register.vue')
   },
 ];
 
