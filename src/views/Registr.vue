@@ -2,6 +2,9 @@
   <div class="login-form">
     <b-card>
       <b-form @submit.prevent="submitHandler">
+        <b-form-group id="name" label="Введите имя" label-for="input-1">
+          <b-form-input id="name" v-model="name" placeholder="Введите имя" required></b-form-input>
+        </b-form-group>
         <b-form-group id="input-group-1" label="Эл. почта" label-for="input-1">
           <b-form-input
             id="input-1"
@@ -20,37 +23,41 @@
             :state="password? !$v.password.$invalid : null"
             id="text-password"
             aria-describedby="password-help-block"
-            required
           />
-          <b-form-text id="password-help-block">Пароль должен быть больше 6 символов</b-form-text>
+          <b-form-text
+            id="password-help-block"
+          >Ваш пароль должен состоять из 8-20 символов, содержать буквы и цифры и не должен содержать пробелов, специальных символов или эмодзи.</b-form-text>
         </b-form-group>
-        <b-button type="submit" variant="primary" class="margin-right">Войти</b-button>
-        <b-button type="submit" variant="success" to="/Registr" class="ml-3">Зарегистрироваться</b-button>
+
+        <b-button type="submit" variant="primary">Войти</b-button>
       </b-form>
     </b-card>
   </div>
 </template>
 <script>
-import { required, minLength } from "vuelidate/lib/validators";
+import { minLength } from "vuelidate/lib/validators";
 
 export default {
   data() {
     return {
+      name: "",
       email: "",
       password: ""
     };
   },
   validations: {
-    password: { required, minLength: minLength(6) }
+    password: { minLength: minLength(6) }
   },
   methods: {
     async submitHandler() {
       const formData = {
         email: this.email,
-        password: this.password
+        password: this.password,
+        name: this.name
       };
+
       try {
-        await this.$store.dispatch("login", formData);
+        await this.$store.dispatch("register", formData);
         this.$router.push("/");
       } catch (e) {}
     }
@@ -58,4 +65,7 @@ export default {
 };
 </script>
 <style scoped>
+.login-form {
+  margin-top: 30px;
+}
 </style>

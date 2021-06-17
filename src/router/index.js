@@ -1,49 +1,41 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import PageContainer from "../views/PageContainer.vue";
+import Home from "../views/Home.vue";
+import firebase from 'firebase/app'
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "PageContainer",
-    component: PageContainer,
-    children: [
-      {
-        path: "/",
-        name: "Home",
-        component: () => import("../views/Home.vue"),
-      },
-      {
-        path: "/work-plan",
-        name: "WorkPlan",
-        component: () => import("../views/WorkPlan.vue"),
-      },
-      {
-        path: "/test",
-        name: "TrainerPrint",
-        component: () => import("../views/TrainerPrint.vue"), 
-      },
-      {
-        path: '/complete',
-        name: 'TestResult',
-        props: true,
-        component: () => import('../views/TestResult.vue')
-      },
-    ]
+    name: "Home",
+    meta: {layout: 'main', auth: true},
+    component: Home,
   },
   {
-    path: '/login',
-    name: 'Login',
-    props: true,
-    component: () => import('../views/Login.vue')
+    path: "/test",
+    name: "TrainerPrint",
+    meta: {layout: 'main', auth: true},
+    component: () => import("../views/TrainerPrint.vue"), 
   },
   {
-    path: '/register',
-    name: 'Register',
+    path: '/complete',
+    name: 'TestResult',
     props: true,
-    component: () => import('../views/Register.vue')
+    meta: {layout: 'main'},
+    component: () => import('../views/TestResult.vue')
+  },
+  {
+    path: "/login",
+    name: "Login",
+    meta: {layout: 'empty'},
+    component: () => import("../views/Login.vue"),
+  },
+  {
+    path: "/registr",
+    name: "Registr",
+    meta: {layout: 'empty'},
+    component: () => import("../views/Registr.vue"),
   },
 ];
 
@@ -52,5 +44,15 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const currentUser = firebase.auth().currentUser;
+  const requireAuth = to.matched.some(record => record.meta.auth);
+  if (requireAuth && !currentUser) {
+    next('/login?message=login')
+  } else {
+    next()
+  }
+})
 
 export default router;

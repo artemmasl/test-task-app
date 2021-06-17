@@ -3,50 +3,27 @@
     <b-card class="flex" @click="startTimer()">
       <b-row>
         <b-col md="10">
-          <b-card-text class="mainTxt">
-            <span
-              v-for="(e, i) in textParse"
-              :key="i"
-              :class="addActiveClass(i)"
-              >{{ e }}</span
-            >
+          <b-card-text class="test-print__content">
+            <span v-for="(e, i) in textParse" :key="i" :class="addActiveClass(i)">{{ e }}</span>
           </b-card-text>
         </b-col>
-        <b-col md="2" class="mainStat">
+        <b-col md="2" class="test-print__stat">
           <div>
-            <span>Скорость</span><br />
+            <h4>Скорость</h4>
             <span>{{ calculatSpeed() }} зн./мин</span>
           </div>
           <div>
-            <span>Точность</span> <br />
+            <h4>Точность</h4>
             <span>{{ calculatAccuracy() }} %</span>
           </div>
         </b-col>
       </b-row>
     </b-card>
-
-    <Modal :modalShow="showModalStartPrint" :options="modalOptionsStart">
-      <template v-slot:text>
-        <div class="text-align-center">
-          <h1>Приготовься печатать. Поехали!</h1>
-        </div>
-      </template>
-      <template v-slot:footer>
-        <b-button class="mt-3" variant="primary" @click="startPrint()">
-          Начать печатать!
-        </b-button>
-      </template>
-    </Modal>
   </div>
 </template>
 <script>
-import Modal from "@/components/Modal.vue";
-
 export default {
   name: "TrainerPrint",
-  components: {
-    Modal,
-  },
   created() {
     this.$store.dispatch("fetchText");
   },
@@ -57,17 +34,21 @@ export default {
       errorCountr: 0, // Кол-во не правильно введённых символов
       totalLetter: 0, // Всего символов в тексте
       timer: 0, // Время на тренажере
-      letterRight: "", // Символ который нужно ввести
-      showModalStartPrint: true,
-      modalOptionsStart: {
-        variant: "primary",
-        hideHeader: true,
-      },
+      letterRight: "" // Символ который нужно ввести
     };
   },
   mounted() {
+    this.$swal({
+      title: "Вы готовы начать ?",
+      icon: "question",
+      confirmButtonColor: "#28a745",
+      confirmButtonText: "Старт",
+      allowOutsideClick: false,
+      allowEscapeKey: false
+    }).then(() => this.startPrint());
+
     // Прослушка событий клавиатуры для тренажера.
-    window.addEventListener("keydown", (e) => {
+    window.addEventListener("keydown", e => {
       if (e.key.length === 1 && this.print) {
         if (e.key === this.letterRight) {
           this.counter++;
@@ -75,7 +56,7 @@ export default {
           if (this.counter === this.totalLetter) {
             let resultTest = {
               accuracy: this.calculatAccuracy(),
-              speed: this.calculatSpeed(),
+              speed: this.calculatSpeed()
             };
             this.$router.push({ name: "TestResult", params: { resultTest } });
           }
@@ -89,16 +70,16 @@ export default {
   },
   computed: {
     textParse() {
-      if (this.$store.state.testText[0]) {
-        return this.$store.state.testText[0].split("");
+      if (this.$store.state.trainer.testText.length) {
+        return this.$store.state.trainer.testText[0].split("");
       }
       return [];
-    },
+    }
   },
   methods: {
     addActiveClass(i) {
       if (i === this.counter) {
-        return "wgreen";
+        return "test-print__content_active";
       }
     },
     startTimer() {
@@ -108,7 +89,6 @@ export default {
       }
     },
     startPrint() {
-      this.showModalStartPrint = false;
       this.letterRight = this.textParse[0];
       this.totalLetter = this.textParse.length;
       this.print = true;
@@ -123,29 +103,39 @@ export default {
       let accuracy = 100 - this.errorCountr / this.totalLetter;
       accuracy === 100 ? Math.round(accuracy) : accuracy.toFixed(1);
 
-      return accuracy ? accuracy : 100;
+      return accuracy ? accuracy.toFixed(2) : 100;
     },
     calculatSpeed() {
       let speed = Math.round(this.counter / (this.timer / 60));
       return speed ? speed : 0;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
 .test-print {
   padding-top: 30px;
-}
-.mainTxt {
-  float: left;
-  font-size: 21px;
-  line-height: 32px;
-  font-size: 21px;
-  color: #5c5c5c;
+  &__content {
+    float: left;
+    font-size: 21px;
+    line-height: 32px;
+    font-size: 21px;
+    color: #5c5c5c;
+    &_active {
+      color: #fff;
+      background-color: #5bc538;
+    }
+  }
 
-  .wgreen {
-    color: #fff;
-    background-color: #5bc538;
+  &__stat {
+    h4 {
+      color: #b5bbc2;
+    }
+    span {
+      color: #67defd;
+      font-size: 20px;
+      font-weight: 700px !important;
+    }
   }
 }
 </style>

@@ -1,31 +1,27 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import auth from './auth';
+import info from './info';
+import trainer from './trainer';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    testText: [],
-    resultTest: {}
+    error: null,
   },
   mutations: {
-    updatePosts(state, testText) {
-      state.testText = testText;
+    setError(state, error) {
+      state.error = error
     },
-    updateResultTest (state, resultTest) {
-      state.resultTest = resultTest
-    }
-  },
-  actions: {
-    fetchText(context) {
-      fetch('https://baconipsum.com/api/?type=all-meat&sentences=1')
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        context.commit('updatePosts', data)
-      })
+    clearError(state) {
+      state.error = null
     },
   },
-  modules: {},
+  getters: {
+    error: s => s.error
+  },
+  modules: {
+    auth,info,trainer
+  },
 });
